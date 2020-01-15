@@ -1,0 +1,74 @@
+package com.example.ranchat
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Patterns
+import android.widget.Toast
+import com.example.ranchat.SignUpActivity.Companion.PASSWORD_PATTERN
+import com.example.ranchat.SignUpActivity.Companion.auth
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_login.*
+
+class LoginActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+        auth= FirebaseAuth.getInstance()
+        login_txtvGuide.setOnClickListener {
+            val intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
+        }
+        login_btnCheck.setOnClickListener {
+            if(isValidEmail(login_edtEmail.text.toString()) && isValidPasswd(login_edtPassword.text.toString())) {
+                signIn()
+            }
+        }
+    }
+    fun signIn(){
+        auth?.signInWithEmailAndPassword(login_edtEmail.text.toString(), login_edtPassword.text.toString())
+            ?.addOnCompleteListener {
+                    task ->
+                if (task.isSuccessful){
+                    Toast.makeText(applicationContext, "로그인성공", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }else{
+                    Toast.makeText(applicationContext, "로그인실패",Toast.LENGTH_SHORT).show()
+                    login_edtEmail.setText("")
+                    login_edtPassword.setText("")
+                }
+            }
+    }
+    fun isValidEmail(email:String): Boolean {
+        when{
+            email.isEmpty() -> {
+                // 이메일 공백
+                Toast.makeText(applicationContext, "이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                // 이메일 형식 불일치
+                Toast.makeText(applicationContext, "이메일 형식이 맞지 않습니다.", Toast.LENGTH_SHORT).show()
+                login_edtEmail.setText("")
+                return false
+            }
+            else-> {return true }
+        }
+    }
+
+    // 비밀번호 유효성 검사
+    fun isValidPasswd(password:String): Boolean {
+        when {
+            password.isEmpty() -> {
+                // 비밀번호 공백
+                Toast.makeText(applicationContext, "비밀번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                return false
+            }
+            else -> {
+                return true
+            }
+        }
+    }
+}

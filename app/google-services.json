@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "233724707920",
+    "firebase_url": "https://ranchat-d40fd.firebaseio.com",
+    "project_id": "ranchat-d40fd",
+    "storage_bucket": "ranchat-d40fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:233724707920:android:a4704e5ffcdf810a4ffd55",
+        "android_client_info": {
+          "package_name": "com.example.ranchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "233724707920-orr322lvtmr0rv2oo5q10lt9csruiuh4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ranchat",
+            "certificate_hash": "0869b98c52268d31cfcf3df11d473cac8c3aed26"
+          }
+        },
+        {
+          "client_id": "233724707920-ne54ro2smq18k39tkr3isrjteuc0k61r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUrJa1jy8YGPJZr1ydmL8BqwMuExdOWq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "233724707920-ne54ro2smq18k39tkr3isrjteuc0k61r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
