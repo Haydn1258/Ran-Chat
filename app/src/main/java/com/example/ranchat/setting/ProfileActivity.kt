@@ -2,7 +2,10 @@ package com.example.ranchat.setting
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -42,12 +45,16 @@ class ProfileActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
+        if(Build.VERSION.SDK_INT >= 21) {
+            profile_imgv.background = ShapeDrawable(OvalShape())
+            profile_imgv.clipToOutline = true
+        }
         firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.
-            get()?.addOnCompleteListener {
+            get()?.addOnSuccessListener {
                 if(it == null){
                     Log.d("snapshot","null")
                 }else{
-                    var user = it.result?.toObject(User::class.java)
+                    var user = it.toObject(User::class.java)
                     if (user?.userUri!=null){
                         Glide.with(this)
                             .load(user.userUri)
@@ -66,8 +73,9 @@ class ProfileActivity : AppCompatActivity() {
             startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
         }
         profile_btnChange.setOnClickListener {
-
+            profile_btnChange.isEnabled=false
             update()
+
 
         }
     }
@@ -92,9 +100,10 @@ class ProfileActivity : AppCompatActivity() {
                 return@continueWithTask storageRef.downloadUrl
             }?.addOnSuccessListener { uri ->
                 var userUpdate:MutableMap<String,Any> = mutableMapOf("userUri" to uri.toString())
-                firestore?.collection("user")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnCompleteListener {
-                    firestore?.collection("currentUser")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnCompleteListener {
+                firestore?.collection("user")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
+                    firestore?.collection("currentUser")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
                         finish()
+                        profile_btnChange.isEnabled=true
                     }
                 }
                 setResult(Activity.RESULT_OK)

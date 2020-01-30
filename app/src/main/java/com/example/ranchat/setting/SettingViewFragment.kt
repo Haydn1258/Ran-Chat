@@ -2,6 +2,9 @@ package com.example.ranchat.setting
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -30,6 +33,10 @@ class SettingViewFragment : Fragment() {
         val view = LayoutInflater.from(activity).inflate(R.layout.fragment_setting, container, false)
         val settingImageView =  view.findViewById<ImageView>(R.id.setting_imgv)
         var firestore : FirebaseFirestore? = FirebaseFirestore.getInstance()
+        if(Build.VERSION.SDK_INT >= 21) {
+            settingImageView.background = ShapeDrawable(OvalShape())
+            settingImageView.clipToOutline = true
+        }
 
         firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.
             addSnapshotListener { querySnapshot, firebaseFirestoreException ->

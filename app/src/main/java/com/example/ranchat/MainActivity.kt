@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.ranchat.chat.ChatViewFragment
-import com.example.ranchat.friend.FriendViewFragment
 import com.example.ranchat.setting.ProfileActivity
 import com.example.ranchat.setting.SettingViewFragment
 import com.example.ranchat.square.SquareViewFragment
+import com.example.ranchat.users.UsersViewFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
@@ -37,19 +37,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
             }
 
-            R.id.action_friend->{
-                if(lastSelect.equals("friend")){
-                    friendStack.clear()
-                    manager.beginTransaction().replace(R.id.main_frameContent, FriendViewFragment()).commit()
+            R.id.action_users->{
+                if(lastSelect.equals("users")){
+                    usersStack.clear()
+                    manager.beginTransaction().replace(R.id.main_frameContent, UsersViewFragment()).commit()
                 }else{
                     stackPush(lastSelect)
-                    if(friendStack.empty()){
-                        manager.beginTransaction().replace(R.id.main_frameContent, FriendViewFragment()).commit()
-                        lastSelect = "friend"
+                    if(usersStack.empty()){
+                        manager.beginTransaction().replace(R.id.main_frameContent, UsersViewFragment()).commit()
+                        lastSelect = "users"
                     }else{
-                        val lastFragmentStack = friendStack.pop()
+                        val lastFragmentStack = usersStack.pop()
                         manager.beginTransaction().replace(R.id.main_frameContent, lastFragmentStack).commit()
-                        lastSelect = "friend"
+                        lastSelect = "users"
                     }
                 }
                 return true
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_bottomnavView.setOnNavigationItemSelectedListener(this)
-        main_bottomnavView.selectedItemId = R.id.action_square
+        main_bottomnavView.selectedItemId = R.id.action_users
 
 
     }
@@ -111,8 +111,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             "chat" ->{
                 chatStack.push(supportFragmentManager.findFragmentById(R.id.main_frameContent))
             }
-            "friend" ->{
-                friendStack.push(supportFragmentManager.findFragmentById(R.id.main_frameContent))
+            "users" ->{
+                usersStack.push(supportFragmentManager.findFragmentById(R.id.main_frameContent))
             }
             "square" ->{
                 squareStack.push(supportFragmentManager.findFragmentById(R.id.main_frameContent))
@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     companion object{
         var chatStack = Stack<Fragment>()
-        var friendStack = Stack<Fragment>()
+        var usersStack = Stack<Fragment>()
         var squareStack = Stack<Fragment>()
         var settingStack = Stack<Fragment>()
         var lastSelect = ""
