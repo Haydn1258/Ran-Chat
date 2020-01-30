@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
+import com.example.ranchat.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,8 +13,10 @@ import java.util.regex.Pattern
 
 class SignUpActivity : AppCompatActivity() {
 
-
+    var auth : FirebaseAuth? = null
+    var firestore : FirebaseFirestore? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
         auth = FirebaseAuth.getInstance()
@@ -41,7 +44,9 @@ class SignUpActivity : AppCompatActivity() {
                     val user = User()
                     user.userID = signup_edtEmail.text.toString()
                     user.userNickname = signup_edtNickname.text.toString()
-                    firestore?.collection("user")?.document(user.userID)?.set(user)
+                    user.uid = auth?.uid
+                    firestore?.collection("user")?.document(user.uid!!)?.set(user)
+                    //firestore?.collection("user")?.document(user.userID)?.collection("friend")?.add("user")
                     Toast.makeText(applicationContext, "회원가입완료", Toast.LENGTH_SHORT).show()
                     this@SignUpActivity.finish()
                     //실패시
@@ -91,7 +96,5 @@ class SignUpActivity : AppCompatActivity() {
     }
     companion object{
         val PASSWORD_PATTERN = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{6,12}$")
-        var auth : FirebaseAuth? = null
-        var firestore : FirebaseFirestore? = null
     }
 }

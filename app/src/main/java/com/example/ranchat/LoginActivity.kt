@@ -3,18 +3,24 @@ package com.example.ranchat
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import com.example.ranchat.SignUpActivity.Companion.PASSWORD_PATTERN
-import com.example.ranchat.SignUpActivity.Companion.auth
+import com.example.ranchat.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_login.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class LoginActivity : AppCompatActivity() {
+    var auth : FirebaseAuth? = null
     override fun onCreate(savedInstanceState: Bundle?) {
+        auth = FirebaseAuth.getInstance()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        auth= FirebaseAuth.getInstance()
+     
         login_txtvGuide.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
@@ -32,6 +38,36 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful){
                     Toast.makeText(applicationContext, "로그인성공", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
+                    var firestore : FirebaseFirestore? = FirebaseFirestore.getInstance()
+
+                    firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.get()?.
+                        addOnCompleteListener{
+                            if(it==null){
+                                Log.d("snapshot","null")
+                            }else{
+                                var user = it.result?.toObject(User::class.java)
+                                user?.timeStamp = System.currentTimeMillis()
+                                firestore.collection("currentUser").document(FirebaseAuth.getInstance().currentUser?.uid!!).get().
+                                    addOnCompleteListener{
+                                        var currentUser = it.result?.toObject(User::class.java)
+                                        if(it==null){
+                                            Log.d("snapshot","null")
+                                        }else{
+                                            if (currentUser?.uid!=null){
+                                                firestore.collection("currentUser").document(user?.uid!!).delete()
+                                                firestore.collection("currentUser").document(user?.uid!!).set(user)
+
+                                            }else{
+                                                firestore.collection("currentUser").document(user?.uid!!).set(user)
+                                            }
+
+                                        }
+                                    }
+                            }
+                        }
+
+
+
                     startActivity(intent)
                     finish()
                 }else{

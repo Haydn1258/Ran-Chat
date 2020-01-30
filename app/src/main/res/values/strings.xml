@@ -6,4 +6,7 @@
     <string name="signup">회원가입</string>
     <string name="check">확인</string>
     <string name="nickname">닉네임</string>
+    <string name="friend">친구</string>
+    <string name="access_user">접속 유저</string>
+    <string name="send">전송</string>
 </resources>

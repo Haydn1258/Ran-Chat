@@ -6,6 +6,7 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.ranchat.chat.ChatViewFragment
 import com.example.ranchat.friend.FriendViewFragment
+import com.example.ranchat.setting.ProfileActivity
 import com.example.ranchat.setting.SettingViewFragment
 import com.example.ranchat.square.SquareViewFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -100,7 +101,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         main_bottomnavView.setOnNavigationItemSelectedListener(this)
-        main_bottomnavView.selectedItemId = R.id.action_chat
+        main_bottomnavView.selectedItemId = R.id.action_square
+
+
     }
 
     fun stackPush(push:String){

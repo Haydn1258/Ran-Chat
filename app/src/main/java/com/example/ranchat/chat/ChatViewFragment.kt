@@ -19,4 +19,5 @@ class ChatViewFragment : Fragment() {
 
         return view
     }
+
 }
