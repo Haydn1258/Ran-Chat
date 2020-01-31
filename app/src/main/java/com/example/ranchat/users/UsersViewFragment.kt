@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,7 @@ import java.util.ArrayList
 
 class UsersViewFragment : Fragment() {
     var firestore: FirebaseFirestore? = null
+    var chatRoomUid:String? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,6 +33,7 @@ class UsersViewFragment : Fragment() {
             LayoutInflater.from(activity).inflate(R.layout.fragment_users, container, false)
         view.users_recyclerView.adapter = UsersRecyclerViewAdapter()
         view.users_recyclerView.layoutManager = LinearLayoutManager(activity)
+
         return view
     }
 
@@ -51,9 +52,10 @@ class UsersViewFragment : Fragment() {
                 } else {
                     for (snapshot in it.documents) {
                         var item = snapshot.toObject(User::class.java)
-                        if (item?.uid != FirebaseAuth.getInstance().currentUser!!.uid) {
-                            user.add(item!!)
+                        if (item?.uid == FirebaseAuth.getInstance().currentUser!!.uid) {
+                            continue
                         }
+                        user.add(item!!)
                     }
                 }
                 notifyDataSetChanged()
@@ -93,9 +95,14 @@ class UsersViewFragment : Fragment() {
                 intent.putExtra("userUri", user[position].userUri)
                 intent.putExtra("destinationUid", user[position].uid)
                 startActivity(intent)
+
             }
+
 
         }
 
+
     }
+
+
 }
