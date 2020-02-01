@@ -9,4 +9,5 @@
     <string name="friend">친구</string>
     <string name="access_user">접속 유저</string>
     <string name="send">전송</string>
+    <string name="chatting">채팅</string>
 </resources>

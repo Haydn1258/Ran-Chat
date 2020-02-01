@@ -16,7 +16,6 @@ import com.example.ranchat.MessageActivity
 import com.example.ranchat.R
 import com.example.ranchat.SignUpActivity
 import com.example.ranchat.chat.ChatViewFragment
-import com.example.ranchat.model.Friend
 import com.example.ranchat.model.User
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth

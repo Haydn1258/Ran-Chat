@@ -6,16 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".MessageActivity">
 
+    <ImageView
+        android:id="@+id/message_imgv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/baseline_clear_black_36"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/message_recyclerview"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"/>
+
+    <TextView
+        android:id="@+id/message_txtvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        android:text=""
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="20dp"
         android:id="@+id/message_recyclerview"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/message_txtvName"
         app:layout_constraintBottom_toTopOf="@+id/message_btn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-
+        app:layout_constraintEnd_toEndOf="parent"
+        android:overScrollMode="never"/>
 
     <EditText
         android:layout_toLeftOf="@+id/message_btn"
@@ -33,5 +57,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="@string/send"/>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

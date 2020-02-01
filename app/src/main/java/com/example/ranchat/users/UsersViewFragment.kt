@@ -83,7 +83,7 @@ class UsersViewFragment : Fragment() {
             if (user[position].userUri != null) {
                 Glide.with(holder.itemView.context).load(user!![position].userUri)
                     .into(viewholder.cardUser_imgv)
-            } else {
+            }else {
                 viewholder.cardUser_imgv.setColorFilter(
                     Color.parseColor("#A4FBB5"),
                     PorterDuff.Mode.SRC_IN
