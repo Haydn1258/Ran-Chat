@@ -104,6 +104,7 @@ class MessageActivity : AppCompatActivity() {
                 }
             }else{
                 chatRoom = true
+                sendMessage()
             }
         }
     }
