@@ -54,6 +54,8 @@ class SettingViewFragment : Fragment() {
                         })*/
                         Glide.with(this)
                             .load(user.userUri)
+                            .override(100,100)
+                            .centerCrop()
                             .into(settingImageView)
                     }else{
                         settingImageView.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)

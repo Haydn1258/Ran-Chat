@@ -58,6 +58,8 @@ class ProfileActivity : AppCompatActivity() {
                     if (user?.userUri!=null){
                         Glide.with(this)
                             .load(user.userUri)
+                            .override(100,100)
+                            .centerCrop()
                             .into(profile_imgv)
                     }else{
                         profile_imgv.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)

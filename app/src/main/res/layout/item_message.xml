@@ -13,8 +13,10 @@
 
         <ImageView
             android:id="@+id/messageItem_imgvProfile"
+            android:backgroundTint="@android:color/transparent"
             android:layout_width="50dp"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:src="@drawable/baseline_supervised_user_circle_black_48dp"/>
 
         <TextView
             android:id="@+id/messageItem_txtvName"

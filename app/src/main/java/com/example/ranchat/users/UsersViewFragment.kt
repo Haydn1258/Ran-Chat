@@ -3,6 +3,9 @@ package com.example.ranchat.users
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +36,7 @@ class UsersViewFragment : Fragment() {
             LayoutInflater.from(activity).inflate(R.layout.fragment_users, container, false)
         view.users_recyclerView.adapter = UsersRecyclerViewAdapter()
         view.users_recyclerView.layoutManager = LinearLayoutManager(activity)
+
 
         return view
     }
@@ -66,6 +70,10 @@ class UsersViewFragment : Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             var view =
                 LayoutInflater.from(parent.context).inflate(R.layout.card_user, parent, false)
+            if(Build.VERSION.SDK_INT >= 21) {
+                view.cardUser_imgv.background = ShapeDrawable(OvalShape())
+                view.cardUser_imgv.clipToOutline = true
+            }
             return CustomViewHoler(view)
         }
 
@@ -80,8 +88,11 @@ class UsersViewFragment : Fragment() {
 
             //UserNickname
             viewholder.cardUser_txtvName.text = user!![position].userNickname
+
             if (user[position].userUri != null) {
                 Glide.with(holder.itemView.context).load(user!![position].userUri)
+                    .override(50,50)
+                    .centerCrop()
                     .into(viewholder.cardUser_imgv)
             }else {
                 viewholder.cardUser_imgv.setColorFilter(

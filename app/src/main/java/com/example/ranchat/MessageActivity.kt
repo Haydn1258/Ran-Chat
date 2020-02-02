@@ -1,9 +1,10 @@
 package com.example.ranchat
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -17,19 +18,17 @@ import com.example.ranchat.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_message.*
-import kotlinx.android.synthetic.main.card_user.view.*
-import kotlinx.android.synthetic.main.fragment_setting.view.*
 import kotlinx.android.synthetic.main.item_message.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.min
 
 class MessageActivity : AppCompatActivity() {
     var destinationUid:String? = null
     var uid:String? = null
     var chatRoom = false
     var user = User()
+    var destinationComment = Comment()
 
 
 
@@ -43,33 +42,42 @@ class MessageActivity : AppCompatActivity() {
         message_recyclerview.adapter = MessageRecyclerViewAdapter()
         message_recyclerview.layoutManager = LinearLayoutManager(this)
 
-
         Log.d("Aa", destinationUid.toString())
-        checkChatRoom()
         message_btn.setOnClickListener {
+
             if(!message_edt.text.toString().equals("")){
+                message_btn.isEnabled = false
                 if (chatRoom != false){
-                    message_btn.isEnabled = false
-                    val comment = Comment()
-                    comment.uid = uid
-                    comment.message = message_edt.text.toString()
-                    comment.timeStamp = System.currentTimeMillis()
-                    FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").document(destinationUid!!).collection("comments").add(comment).addOnSuccessListener {
-                        var userUpdate:MutableMap<String,Any> = mutableMapOf("timeStamp" to System.currentTimeMillis(), "lastMessage" to comment.message!!)
-                        FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").document(destinationUid!!).update(userUpdate).addOnSuccessListener {
-                            message_edt.setText("")
-                            message_btn.isEnabled = true
-                        }
+                    sendMessage()
+                }else{
+                    checkChatRoom()
 
-
-                    }
                 }
             }
         }
 
-        message_imgv.setOnClickListener {
+        message_imgButton.setOnClickListener {
             finish()
         }
+
+    }
+
+    fun sendMessage(){
+        val comment = Comment()
+        comment.uid = uid
+        comment.message = message_edt.text.toString()
+        comment.timeStamp = System.currentTimeMillis()
+        FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").document(destinationUid!!).collection("comments").add(comment)
+        FirebaseFirestore.getInstance().collection("chatRooms").document(destinationUid!!).collection("chatUsers").document(uid!!).collection("comments").add(comment).addOnSuccessListener {
+            var userUpdate:MutableMap<String,Any> = mutableMapOf("timeStamp" to System.currentTimeMillis(), "lastMessage" to comment.message!!)
+            var destinationUpdate:MutableMap<String,Any> = mutableMapOf("timeStamp" to System.currentTimeMillis(), "lastMessage" to comment.message!!)
+            FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").document(destinationUid!!).update(userUpdate)
+            FirebaseFirestore.getInstance().collection("chatRooms").document(destinationUid!!).collection("chatUsers").document(uid!!).update(destinationUpdate).addOnSuccessListener {
+                message_edt.setText("")
+                message_btn.isEnabled = true
+            }
+        }
+
 
     }
 
@@ -78,16 +86,26 @@ class MessageActivity : AppCompatActivity() {
             if (it.documents.isEmpty()){
                 var chatUser = ChatUser()
                 chatUser.uid = user.uid
-                chatUser.timeStamp = user.timeStamp
+                chatUser.timeStamp =  System.currentTimeMillis()
                 chatUser.userNickname = user.userNickname
                 FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").document(destinationUid!!).set(chatUser).addOnSuccessListener {
-                    chatRoom = true
+                    FirebaseFirestore.getInstance().collection("user").whereEqualTo("uid",uid).get().addOnSuccessListener {
+                        for(snapshot in it.documents){
+                            var item = snapshot.toObject(User::class.java)
+                            chatUser.userNickname = item!!.userNickname
+                        }
+                        chatUser.uid = uid
+                        FirebaseFirestore.getInstance().collection("chatRooms").document(destinationUid!!).collection("chatUsers").document(uid!!).set(chatUser).addOnSuccessListener {
+                            chatRoom = true
+                            sendMessage()
+                        }
+                    }
+
                 }
             }else{
                 chatRoom = true
             }
         }
-
     }
 
     inner class MessageRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -134,6 +152,10 @@ class MessageActivity : AppCompatActivity() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             var view =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
+            if(Build.VERSION.SDK_INT >= 21) {
+                view.messageItem_imgvProfile.background = ShapeDrawable(OvalShape())
+                view.messageItem_imgvProfile.clipToOutline = true
+            }
             return CustomViewHoler(view)
         }
 
@@ -158,6 +180,8 @@ class MessageActivity : AppCompatActivity() {
             }else{
                 if (user.userUri != null) {
                     Glide.with(holder.itemView.context).load(user.userUri)
+                        .override(50,50)
+                        .centerCrop()
                         .into(messageViewholder.messageItem_imgvProfile)
                 }else {
                     messageViewholder.messageItem_imgvProfile.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)

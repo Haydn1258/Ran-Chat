@@ -3,11 +3,15 @@ package com.example.ranchat.chat
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,8 +38,12 @@ class ChatViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = LayoutInflater.from(activity).inflate(R.layout.fragment_chat, container, false)
+
         view.chat_recyclerViewChatList.adapter = ChatListRecyclerViewAdapter()
         view.chat_recyclerViewChatList.layoutManager = LinearLayoutManager(activity)
+
+
+
 
 
         return view
@@ -45,7 +53,7 @@ class ChatViewFragment : Fragment() {
         var uid:String? = FirebaseAuth.getInstance().currentUser?.uid
         var destinationUsers:ArrayList<String> = arrayListOf()
         init {
-            FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers")
+            FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").orderBy("timeStamp")
                 .addSnapshotListener {
                         querySnapshot, firebaseFirestoreException ->
                     chatUsers.clear()
@@ -55,6 +63,7 @@ class ChatViewFragment : Fragment() {
                         Log.d("aas",querySnapshot.toString())
                         for(snapshot in querySnapshot.documents){
                             var item = snapshot.toObject(ChatUser::class.java)
+                            Log.d("aaafff",item.toString())
                             chatUsers.add(item!!)
                             destinationUsers.add(item.uid!!)
                         }
@@ -69,6 +78,10 @@ class ChatViewFragment : Fragment() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             var view =
                 LayoutInflater.from(parent.context).inflate(R.layout.card_chat, parent, false)
+            if(Build.VERSION.SDK_INT >= 21) {
+                view.cardChat_imgv.background = ShapeDrawable(OvalShape())
+                view.cardChat_imgv.clipToOutline = true
+            }
             return CustomViewHoler(view)
         }
 
@@ -86,6 +99,8 @@ class ChatViewFragment : Fragment() {
                 }
                 if (chatUser.userUri != null) {
                     Glide.with(holder.itemView.context).load(chatUser.userUri)
+                        .override(50,50)
+                        .centerCrop()
                         .into(chatViewholder.cardChat_imgv)
                 }else {
                     chatViewholder.cardChat_imgv.setColorFilter(
@@ -94,6 +109,7 @@ class ChatViewFragment : Fragment() {
                     )
                 }
             }
+
             chatViewholder.cardChat_txtvTitle.text = chatUsers[position].userNickname
             chatViewholder.cardChat_txtvMessage.text = chatUsers[position].lastMessage
             chatViewholder.cardChat_txtvTimeStamp.text = MessageActivity.dateFormat(chatUsers[position].timeStamp!!)

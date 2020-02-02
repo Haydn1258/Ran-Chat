@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MessageActivity">
+    tools:context=".MessageActivity"
+    android:background="@android:color/white">
 
-    <ImageView
-        android:id="@+id/message_imgv"
+    <ImageButton
+        android:id="@+id/message_imgButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/baseline_clear_black_36"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_back"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/message_recyclerview"
         app:layout_constraintStart_toStartOf="parent"

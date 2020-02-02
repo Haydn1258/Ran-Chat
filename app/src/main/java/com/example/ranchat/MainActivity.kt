@@ -10,6 +10,11 @@ import com.example.ranchat.setting.SettingViewFragment
 import com.example.ranchat.square.SquareViewFragment
 import com.example.ranchat.users.UsersViewFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -102,6 +107,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         setContentView(R.layout.activity_main)
         main_bottomnavView.setOnNavigationItemSelectedListener(this)
         main_bottomnavView.selectedItemId = R.id.action_users
+        passPushTokenToServer()
 
 
     }
@@ -129,6 +135,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         var squareStack = Stack<Fragment>()
         var settingStack = Stack<Fragment>()
         var lastSelect = ""
+
+    }
+
+    fun passPushTokenToServer(){
+        var uid = FirebaseAuth.getInstance().currentUser?.uid
+        var token = FirebaseInstanceId.getInstance().getToken()
+        var map:MutableMap<String,Any> = mutableMapOf("pushToken" to token!!)
+
+        FirebaseFirestore.getInstance().collection("user").document(uid!!).update(map)
 
     }
 
