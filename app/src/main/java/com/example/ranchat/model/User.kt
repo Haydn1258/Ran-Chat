@@ -6,4 +6,5 @@ data class User(
     var userNickname:String? = null,
     var uid:String? = null,
     var userUri: String? = null,
-    var timeStamp:Long? = null)
+    var timeStamp:Long? = null,
+    var pushToken:String? = null)

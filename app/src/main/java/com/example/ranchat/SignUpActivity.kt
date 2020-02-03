@@ -6,6 +6,7 @@ import android.util.Patterns
 import android.widget.Toast
 import com.example.ranchat.model.User
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -45,6 +46,11 @@ class SignUpActivity : AppCompatActivity() {
                     user.userID = signup_edtEmail.text.toString()
                     user.userNickname = signup_edtNickname.text.toString()
                     user.uid = auth?.uid
+
+                    val userProfileChangeRequest = UserProfileChangeRequest.Builder().setDisplayName(user.userNickname).build()
+
+                    task.getResult()!!.user!!.updateProfile(userProfileChangeRequest)
+
                     firestore?.collection("user")?.document(user.uid!!)?.set(user)
                     //firestore?.collection("user")?.document(user.userID)?.collection("friend")?.add("user")
                     Toast.makeText(applicationContext, "회원가입완료", Toast.LENGTH_SHORT).show()

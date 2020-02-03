@@ -99,7 +99,7 @@ class ChatViewFragment : Fragment() {
                 }
                 if (chatUser.userUri != null) {
                     Glide.with(holder.itemView.context).load(chatUser.userUri)
-                        .override(50,50)
+                        .override(1080,1080)
                         .centerCrop()
                         .into(chatViewholder.cardChat_imgv)
                 }else {

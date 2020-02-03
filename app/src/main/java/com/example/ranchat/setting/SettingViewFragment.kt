@@ -2,6 +2,8 @@ package com.example.ranchat.setting
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.os.Build
@@ -13,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.example.ranchat.LoginActivity
+import com.example.ranchat.MainActivity
 import com.example.ranchat.R
 import com.example.ranchat.SignUpActivity
 import com.example.ranchat.model.User
@@ -59,6 +63,10 @@ class SettingViewFragment : Fragment() {
                             .into(settingImageView)
                     }else{
                         settingImageView.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)
+                        settingImageView.setColorFilter(
+                            Color.parseColor("#A4FBB5"),
+                            PorterDuff.Mode.SRC_IN
+                        )
                     }
 
                 }
@@ -70,6 +78,8 @@ class SettingViewFragment : Fragment() {
             val intent = Intent(activity, ProfileActivity::class.java)
             startActivity(intent)
         }
+
+
 
 
 

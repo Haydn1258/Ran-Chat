@@ -1,14 +1,19 @@
 package com.example.ranchat
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.ranchat.chat.ChatViewFragment
+import com.example.ranchat.model.User
 import com.example.ranchat.setting.ProfileActivity
 import com.example.ranchat.setting.SettingViewFragment
 import com.example.ranchat.square.SquareViewFragment
 import com.example.ranchat.users.UsersViewFragment
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -21,6 +26,8 @@ import java.util.*
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
     val manager = supportFragmentManager
+
+
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when(p0.itemId){
             R.id.action_chat->{
@@ -137,14 +144,27 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         var lastSelect = ""
 
     }
-
     fun passPushTokenToServer(){
         var uid = FirebaseAuth.getInstance().currentUser?.uid
-        var token = FirebaseInstanceId.getInstance().getToken()
-        var map:MutableMap<String,Any> = mutableMapOf("pushToken" to token!!)
+        Log.d("aa","aaaaaaaa")
 
-        FirebaseFirestore.getInstance().collection("user").document(uid!!).update(map)
+        Log.d("aaff", FirebaseInstanceId.getInstance().instanceId.toString())
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.d("aaff", "aaa")
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+                var map:MutableMap<String,Any> = mutableMapOf("pushToken" to token!!)
+                FirebaseFirestore.getInstance().collection("user").document(uid!!).update(map)
+                Log.d("aaff", "seee")
+            })
+
 
     }
+
 
 }

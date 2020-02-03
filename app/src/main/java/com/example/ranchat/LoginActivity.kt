@@ -8,8 +8,10 @@ import android.util.Patterns
 import android.widget.Toast
 import com.example.ranchat.SignUpActivity.Companion.PASSWORD_PATTERN
 import com.example.ranchat.model.User
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_login.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, "로그인성공", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
                     var firestore : FirebaseFirestore? = FirebaseFirestore.getInstance()
+
 
                     firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.get()?.
                         addOnCompleteListener{
@@ -107,4 +110,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

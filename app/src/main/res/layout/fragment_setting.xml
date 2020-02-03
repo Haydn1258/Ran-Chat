@@ -13,6 +13,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@android:color/transparent"
         tools:srcCompat="@drawable/baseline_supervised_user_circle_black_48dp2" />
 
     <TextView
@@ -24,4 +25,6 @@
         android:text="TextView"
         app:layout_constraintEnd_toStartOf="@+id/setting_imgv"
         app:layout_constraintTop_toBottomOf="@+id/setting_imgv" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

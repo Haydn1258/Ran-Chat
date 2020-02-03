@@ -2,6 +2,8 @@ package com.example.ranchat.setting
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.net.Uri
@@ -10,13 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
+import com.example.ranchat.LoginActivity
 import com.example.ranchat.MainActivity
 import com.example.ranchat.R
 import com.example.ranchat.model.User
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -55,6 +60,7 @@ class ProfileActivity : AppCompatActivity() {
                     Log.d("snapshot","null")
                 }else{
                     var user = it.toObject(User::class.java)
+                    Log.d("aaff", user?.userUri.toString())
                     if (user?.userUri!=null){
                         Glide.with(this)
                             .load(user.userUri)
@@ -63,6 +69,10 @@ class ProfileActivity : AppCompatActivity() {
                             .into(profile_imgv)
                     }else{
                         profile_imgv.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)
+                        profile_imgv.setColorFilter(
+                            Color.parseColor("#A4FBB5"),
+                            PorterDuff.Mode.SRC_IN
+                        )
                     }
 
                 }
@@ -77,8 +87,10 @@ class ProfileActivity : AppCompatActivity() {
         profile_btnChange.setOnClickListener {
             profile_btnChange.isEnabled=false
             update()
+        }
 
-
+        profile_btn.setOnClickListener {
+            signOut()
         }
     }
 
@@ -115,6 +127,23 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         }
+    }
 
+    fun signOut(){
+        FirebaseFirestore.getInstance().collection("currentUser").document(FirebaseAuth.getInstance().currentUser?.uid!!).get().
+            addOnCompleteListener{
+                var currentUser = it.result?.toObject(User::class.java)
+                if(it==null){
+                    Log.d("snapshot","null")
+                }else{
+                    FirebaseFirestore.getInstance().collection("currentUser").document(FirebaseAuth.getInstance()?.uid!!).delete().addOnSuccessListener {
+                        FirebaseAuth.getInstance().signOut()
+                        val intent = Intent(this, LoginActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    }
+                }
+            }
     }
 }

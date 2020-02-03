@@ -1,5 +1,6 @@
 package com.example.ranchat
 
+import android.app.Activity
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ShapeDrawable
@@ -14,11 +15,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ranchat.model.ChatUser
 import com.example.ranchat.model.Comment
+import com.example.ranchat.model.NotificationModel
 import com.example.ranchat.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.squareup.okhttp.*
 import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.item_message.view.*
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -27,8 +32,9 @@ class MessageActivity : AppCompatActivity() {
     var destinationUid:String? = null
     var uid:String? = null
     var chatRoom = false
-    var user = User()
-    var destinationComment = Comment()
+    var destinationUser = User()
+    var userUri:String? = null
+    var pushToken:String? = null
 
 
 
@@ -73,6 +79,7 @@ class MessageActivity : AppCompatActivity() {
             var destinationUpdate:MutableMap<String,Any> = mutableMapOf("timeStamp" to System.currentTimeMillis(), "lastMessage" to comment.message!!)
             FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").document(destinationUid!!).update(userUpdate)
             FirebaseFirestore.getInstance().collection("chatRooms").document(destinationUid!!).collection("chatUsers").document(uid!!).update(destinationUpdate).addOnSuccessListener {
+                sendGcm()
                 message_edt.setText("")
                 message_btn.isEnabled = true
             }
@@ -85,14 +92,15 @@ class MessageActivity : AppCompatActivity() {
         FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").whereEqualTo("uid",destinationUid).get().addOnSuccessListener {
             if (it.documents.isEmpty()){
                 var chatUser = ChatUser()
-                chatUser.uid = user.uid
+                chatUser.uid = destinationUser.uid
                 chatUser.timeStamp =  System.currentTimeMillis()
-                chatUser.userNickname = user.userNickname
+                chatUser.userNickname = destinationUser.userNickname
                 FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").document(destinationUid!!).set(chatUser).addOnSuccessListener {
                     FirebaseFirestore.getInstance().collection("user").whereEqualTo("uid",uid).get().addOnSuccessListener {
                         for(snapshot in it.documents){
                             var item = snapshot.toObject(User::class.java)
                             chatUser.userNickname = item!!.userNickname
+                            userUri = item.userUri
                         }
                         chatUser.uid = uid
                         FirebaseFirestore.getInstance().collection("chatRooms").document(destinationUid!!).collection("chatUsers").document(uid!!).set(chatUser).addOnSuccessListener {
@@ -109,6 +117,39 @@ class MessageActivity : AppCompatActivity() {
         }
     }
 
+    fun sendGcm(){
+        val gson = Gson()
+        var userName = FirebaseAuth.getInstance().currentUser!!.displayName
+        val notificationModel = NotificationModel()
+        notificationModel.to = pushToken
+        notificationModel.notification.title = userName
+        notificationModel.notification.text = message_edt.text.toString()
+        notificationModel.data.title = userName
+        notificationModel.data.text = message_edt.text.toString()
+
+        val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"), gson.toJson(notificationModel))
+
+        val request = Request.Builder()
+            .header("Content-Type", "application/json")
+            .addHeader("Authorization","key=AIzaSyC3bEhsQTu4kyzFrbt0n6d5_Lp1qMXrI08")
+            .url("https://fcm.googleapis.com/fcm/send")
+            .post(requestBody)
+            .build()
+
+        val okHttpClient = OkHttpClient()
+        okHttpClient.newCall(request).enqueue(object :Callback{
+            override fun onFailure(request: Request?, e: IOException?) {
+                Log.d("callback","실패")
+            }
+
+            override fun onResponse(response: Response?) {
+
+            }
+
+        })
+
+    }
+
     inner class MessageRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         var comment: ArrayList<Comment> = arrayListOf()
 
@@ -118,9 +159,10 @@ class MessageActivity : AppCompatActivity() {
             FirebaseFirestore.getInstance().collection("user").whereEqualTo("uid",destinationUid).get().addOnSuccessListener {
                 for(snapshot in it.documents){
                     var item = snapshot.toObject(User::class.java)
-                    user = item!!
+                    destinationUser = item!!
+                    pushToken = item.pushToken
                 }
-                message_txtvName.text = user.userNickname
+                message_txtvName.text = destinationUser.userNickname
                 getMessageList()
             }
 
@@ -179,8 +221,8 @@ class MessageActivity : AppCompatActivity() {
 
             //상대방이 보낸 메세지
             }else{
-                if (user.userUri != null) {
-                    Glide.with(holder.itemView.context).load(user.userUri)
+                if (destinationUser.userUri != null) {
+                    Glide.with(holder.itemView.context).load(destinationUser.userUri)
                         .override(50,50)
                         .centerCrop()
                         .into(messageViewholder.messageItem_imgvProfile)
@@ -191,7 +233,7 @@ class MessageActivity : AppCompatActivity() {
                         PorterDuff.Mode.SRC_IN
                     )
                 }
-                messageViewholder.messageItem_txtvName.setText(user.userNickname)
+                messageViewholder.messageItem_txtvName.setText(destinationUser.userNickname)
                 messageViewholder.messageItem_linearlayoutDestination.visibility = View.VISIBLE
                 messageViewholder.messageItem_txtvMessage.setBackgroundResource(R.drawable.leftbubble)
                 messageViewholder.messageItem_txtvMessage.setText(comment[position].message)
