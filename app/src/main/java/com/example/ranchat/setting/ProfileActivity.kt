@@ -137,6 +137,8 @@ class ProfileActivity : AppCompatActivity() {
                     Log.d("snapshot","null")
                 }else{
                     FirebaseFirestore.getInstance().collection("currentUser").document(FirebaseAuth.getInstance()?.uid!!).delete().addOnSuccessListener {
+                        var userToken:MutableMap<String,Any> = mutableMapOf("pushToken" to "")
+                        FirebaseFirestore.getInstance().collection("user").document(FirebaseAuth.getInstance()?.uid!!).update(userToken)
                         FirebaseAuth.getInstance().signOut()
                         val intent = Intent(this, LoginActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

@@ -9,6 +9,7 @@ import android.graphics.drawable.shapes.OvalShape
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_setting.*
+import java.security.Key
 
 class SettingViewFragment : Fragment() {
     override fun onCreateView(
@@ -78,10 +80,6 @@ class SettingViewFragment : Fragment() {
             val intent = Intent(activity, ProfileActivity::class.java)
             startActivity(intent)
         }
-
-
-
-
 
         return view
     }

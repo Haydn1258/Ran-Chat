@@ -87,20 +87,23 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
 
             R.id.action_setting ->{
-                if(lastSelect.equals("setting")){
+                manager.beginTransaction().replace(R.id.main_frameContent, SettingViewFragment()).commit()
+                lastSelect = "setting"
+                /*if(lastSelect.equals("setting")){
                     settingStack.clear()
-                    manager.beginTransaction().replace(R.id.main_frameContent, SettingViewFragment()).commit()
+
                 }else{
                     stackPush(lastSelect)
                     if(settingStack.empty()){
                         manager.beginTransaction().replace(R.id.main_frameContent, SettingViewFragment()).commit()
-                        lastSelect = "setting"
+
                     }else{
                         val lastFragmentStack = settingStack.pop()
+                        Log.d("aafff", lastFragmentStack.toString())
                         manager.beginTransaction().replace(R.id.main_frameContent, lastFragmentStack).commit()
                         lastSelect = "setting"
                     }
-                }
+                }*/
                 return true
             }
         }
@@ -131,7 +134,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 squareStack.push(supportFragmentManager.findFragmentById(R.id.main_frameContent))
             }
             "setting" ->{
-                settingStack.push(supportFragmentManager.findFragmentById(R.id.main_frameContent))
+               // settingStack.push(supportFragmentManager.findFragmentById(R.id.main_frameContent))
             }
         }
     }
@@ -140,7 +143,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         var chatStack = Stack<Fragment>()
         var usersStack = Stack<Fragment>()
         var squareStack = Stack<Fragment>()
-        var settingStack = Stack<Fragment>()
+        //var settingStack = Stack<Fragment>()
         var lastSelect = ""
 
     }

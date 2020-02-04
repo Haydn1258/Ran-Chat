@@ -22,7 +22,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.card_user.view.*
 import kotlinx.android.synthetic.main.fragment_users.view.*
-import java.util.ArrayList
+import org.joda.time.DateTime
+import org.joda.time.Days
+import org.joda.time.Hours
+import org.joda.time.Minutes
+import java.text.SimpleDateFormat
+import java.util.*
 
 class UsersViewFragment : Fragment() {
     var firestore: FirebaseFirestore? = null
@@ -100,6 +105,7 @@ class UsersViewFragment : Fragment() {
                     PorterDuff.Mode.SRC_IN
                 )
             }
+            viewholder.cardUser_txtvDateTime.text = getDiffTimeText(user[position].timeStamp!!)
             holder.itemView.setOnClickListener {
                 val intent = Intent(activity, MessageActivity::class.java)
                 intent.putExtra("userNickname", user[position].userNickname)
@@ -113,6 +119,32 @@ class UsersViewFragment : Fragment() {
         }
 
 
+    }
+
+
+    fun getDiffTimeText(targetTime:Long):String{
+        val curDateTime = DateTime()
+        val targetDateTime = DateTime().withMillis(targetTime)
+        val diffDay = Days.daysBetween(curDateTime, targetDateTime).days
+        val diffHours = Hours.hoursBetween(targetDateTime, curDateTime).hours
+        val diffMinutes = Minutes.minutesBetween(targetDateTime, curDateTime).minutes
+
+        if(diffDay == 0){
+            if(diffHours == 0 && diffMinutes == 0){
+                return "방금전"
+            }
+            return if(diffHours > 0){
+                ""+ diffHours + "시간전"
+            }else "" + diffMinutes + "분전"
+        }else{
+            if (diffDay>-7){
+                return ""+Days.daysBetween(targetDateTime,curDateTime).days+"일전"
+            }else{
+                val format = SimpleDateFormat("MM월 dd일")
+                return format.format(Date(targetTime))
+            }
+
+        }
     }
 
 

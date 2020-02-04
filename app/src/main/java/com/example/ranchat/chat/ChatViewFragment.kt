@@ -29,7 +29,14 @@ import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_chat.view.*
 import kotlinx.android.synthetic.main.item_chat.view.*
 import kotlinx.android.synthetic.main.item_message.view.*
+import org.joda.time.DateTime
+import org.joda.time.Days
+import org.joda.time.Hours
+import org.joda.time.Minutes
 import java.lang.reflect.Array
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatViewFragment : Fragment() {
     override fun onCreateView(
@@ -124,6 +131,4 @@ class ChatViewFragment : Fragment() {
         }
 
     }
-
-
 }
