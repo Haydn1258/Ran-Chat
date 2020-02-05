@@ -40,36 +40,6 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful){
                     Toast.makeText(applicationContext, "로그인성공", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, MainActivity::class.java)
-                    var firestore : FirebaseFirestore? = FirebaseFirestore.getInstance()
-
-
-                    firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.get()?.
-                        addOnCompleteListener{
-                            if(it==null){
-                                Log.d("snapshot","null")
-                            }else{
-                                var user = it.result?.toObject(User::class.java)
-                                user?.timeStamp = System.currentTimeMillis()
-                                firestore.collection("currentUser").document(FirebaseAuth.getInstance().currentUser?.uid!!).get().
-                                    addOnCompleteListener{
-                                        var currentUser = it.result?.toObject(User::class.java)
-                                        if(it==null){
-                                            Log.d("snapshot","null")
-                                        }else{
-                                            if (currentUser?.uid!=null){
-                                                firestore.collection("currentUser").document(user?.uid!!).delete()
-                                                firestore.collection("currentUser").document(user?.uid!!).set(user)
-
-                                            }else{
-                                                firestore.collection("currentUser").document(user?.uid!!).set(user)
-                                            }
-
-                                        }
-                                    }
-                            }
-                        }
-
-
 
                     startActivity(intent)
                     finish()

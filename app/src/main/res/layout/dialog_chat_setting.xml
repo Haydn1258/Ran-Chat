@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:paddingBottom="20dp"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
     <TextView
         android:id="@+id/dialogChatSetting_txtvTitle"
         android:layout_width="match_parent"
@@ -10,19 +12,57 @@
         android:layout_height="wrap_content"
         android:textSize="26sp"
         android:textColor="@android:color/black"
-        android:text="aa"
+        android:text="대화 종료"
+        android:textStyle="bold"
         android:background="@android:color/transparent"
-        android:gravity="start" />
-    <Button
-        android:id="@+id/dialogChatSetting_btnExit"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/dialogChatSetting_txtvGuide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:text="나가기"
-        android:background="@android:color/transparent"
-        android:textSize="16sp"
-        android:gravity="start"
-        android:padding="20dp"
-        />
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textSize="20sp"
+        android:text="채팅방에서 나가시겠습니까? 나가기를 하면 대화내용 및 채팅방 정보가 모두 삭제됩니다."
+        android:gravity="center"
+        android:textColor="@android:color/black"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:id="@+id/dialogChatSetting_btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="취소"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginStart="20dp"
+            android:background="@drawable/btn_edge_white"
+            android:layout_marginEnd="10dp"
+            android:stateListAnimator="@null" />
+
+        <Button
+            android:id="@+id/dialogChatSetting_btnOK"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="확인"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/btn_edge_blue"
+            android:stateListAnimator="@null"
+            android:layout_marginStart="10dp"/>
+
+
+    </LinearLayout>
+
 
 </LinearLayout>

@@ -25,6 +25,7 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_setting.*
@@ -43,38 +44,42 @@ class SettingViewFragment : Fragment() {
             settingImageView.background = ShapeDrawable(OvalShape())
             settingImageView.clipToOutline = true
         }
-
-        firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.
-            addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                if(querySnapshot==null){
-                    Log.d("snapshot","null")
-                }else{
-                    var user = querySnapshot.toObject(User::class.java)
-                    if (user?.userUri!=null){
-                        /*ref.getDownloadUrl().addOnCompleteListener(OnCompleteListener {
-                            if(it.isSuccessful){
-                                Glide.with(this)
-                                    .load(it.getResult())
-                                    .into(settingImageView);
-                            }
-                        })*/
-                        Glide.with(this)
-                            .load(user.userUri)
-                            .override(100,100)
-                            .centerCrop()
-                            .into(settingImageView)
-                    }else{
-                        settingImageView.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)
-                        settingImageView.setColorFilter(
-                            Color.parseColor("#A4FBB5"),
-                            PorterDuff.Mode.SRC_IN
-                        )
+        firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.addSnapshotListener{
+                documentSnapshot, firebaseFirestoreException ->
+            if(documentSnapshot==null){
+                Log.d("snapshot","null")
+            }else{
+                if(isAdded()){
+                    if (MainActivity.settingBoolean){
+                        var user = documentSnapshot.toObject(User::class.java)
+                        if (user?.userUri!=null){
+                            Log.d("aaffd",user.userUri.toString())
+                            /*ref.getDownloadUrl().addOnCompleteListener(OnCompleteListener {
+                                   if(it.isSuccessful){
+                                       Glide.with(this)
+                                           .load(it.getResult())
+                                           .into(settingImageView);
+                                   }
+                               })*/
+                            Glide.with(this)
+                                .load(user.userUri)
+                                .override(100,100)
+                                .centerCrop()
+                                .into(settingImageView)
+                        }else{
+                            settingImageView.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)
+                            settingImageView.setColorFilter(
+                                Color.parseColor("#A4FBB5"),
+                                PorterDuff.Mode.SRC_IN
+                            )
+                        }
                     }
-
                 }
+
+
+
             }
-
-
+        }
 
         settingImageView.setOnClickListener {
             val intent = Intent(activity, ProfileActivity::class.java)

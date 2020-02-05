@@ -99,7 +99,11 @@ class ProfileActivity : AppCompatActivity() {
         if(requestCode == PICK_IMAGE_FROM_ALBUM){
             if(resultCode == Activity.RESULT_OK){
                 photoUri = data?.data
-                profile_imgv.setImageURI(photoUri)
+                Glide.with(this)
+                    .load(photoUri)
+                    .override(100,100)
+                    .centerCrop()
+                    .into(profile_imgv)
             }
         }
     }
@@ -137,13 +141,14 @@ class ProfileActivity : AppCompatActivity() {
                     Log.d("snapshot","null")
                 }else{
                     FirebaseFirestore.getInstance().collection("currentUser").document(FirebaseAuth.getInstance()?.uid!!).delete().addOnSuccessListener {
+                        MainActivity.settingBoolean = false
                         var userToken:MutableMap<String,Any> = mutableMapOf("pushToken" to "")
                         FirebaseFirestore.getInstance().collection("user").document(FirebaseAuth.getInstance()?.uid!!).update(userToken)
-                        FirebaseAuth.getInstance().signOut()
                         val intent = Intent(this, LoginActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
+                        FirebaseAuth.getInstance().signOut()
                     }
                 }
             }

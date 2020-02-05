@@ -1,6 +1,8 @@
 package com.example.ranchat
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ShapeDrawable
@@ -10,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,7 +25,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.squareup.okhttp.*
+import kotlinx.android.synthetic.main.activity_drawer.*
+import kotlinx.android.synthetic.main.activity_drawer.view.*
 import kotlinx.android.synthetic.main.activity_message.*
+import kotlinx.android.synthetic.main.dialog_chat_setting.view.*
 import kotlinx.android.synthetic.main.item_message.view.*
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -35,18 +42,41 @@ class MessageActivity : AppCompatActivity() {
     var destinationUser = User()
     var userUri:String? = null
     var pushToken:String? = null
-
-
+    var editBoolean = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
+        messageActivity = this
 
         uid = FirebaseAuth.getInstance().currentUser!!.uid
         destinationUid = intent.getStringExtra("destinationUid")
         message_recyclerview.adapter = MessageRecyclerViewAdapter()
         message_recyclerview.layoutManager = LinearLayoutManager(this)
+
+
+        message_imgNav.setOnClickListener {
+
+            if (destinationUser.userUri!=null){
+                Glide.with(this)
+                    .load(destinationUser.userUri)
+                    .override(100,100)
+                    .centerCrop()
+                    .circleCrop()
+                    .into(drawer_imgv)
+            }else{
+                drawer_imgv.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)
+                drawer_imgv.setColorFilter(
+                    Color.parseColor("#A4FBB5"),
+                    PorterDuff.Mode.SRC_IN
+                )
+            }
+            drawer_txtvTitle.text = destinationUser.userNickname.toString()
+            drawer_layout.openDrawer(drawer)
+        }
+
+
 
         Log.d("Aa", destinationUid.toString())
         message_btn.setOnClickListener {
@@ -62,11 +92,53 @@ class MessageActivity : AppCompatActivity() {
             }
         }
 
+        message_edt.setOnKeyListener { view, i, keyEvent ->
+            when(i){
+                KeyEvent.KEYCODE_ENTER ->{
+                    if(editBoolean){
+                        editBoolean = false
+                        if(!message_edt.text.toString().equals("")){
+                            message_btn.isEnabled = false
+                            if (chatRoom != false){
+                                sendMessage()
+                            }else{
+                                checkChatRoom()
+
+                            }
+                        }
+                    }
+                }
+            }
+            return@setOnKeyListener true
+        }
+
+        drawer.setOnTouchListener { view, motionEvent ->
+            return@setOnTouchListener true
+        }
+
+        drawer_btnExit.setOnClickListener {
+            //showDialog(it.context)
+            ChatDialogFagment.newInstance(destinationUid).show(supportFragmentManager, "dialog")
+        }
+
         message_imgButton.setOnClickListener {
             finish()
         }
 
+
     }
+
+    /*fun showDialog(context:Context){
+       val builder = AlertDialog.Builder(context)
+
+        val layoutInterface = layoutInflater
+        val view = layoutInterface.inflate(R.layout.dialog_chat_setting, null)
+        view.dialogChatSetting_btnOK.setOnClickListener {
+
+        }
+        builder.show()
+    }*/
+
 
     fun sendMessage(){
         val comment = Comment()
@@ -82,6 +154,7 @@ class MessageActivity : AppCompatActivity() {
                 sendGcm()
                 message_edt.setText("")
                 message_btn.isEnabled = true
+                editBoolean = true
             }
         }
 
@@ -162,7 +235,6 @@ class MessageActivity : AppCompatActivity() {
                     destinationUser = item!!
                     pushToken = item.pushToken
                 }
-                message_txtvName.text = destinationUser.userNickname
                 getMessageList()
             }
 
@@ -184,6 +256,8 @@ class MessageActivity : AppCompatActivity() {
                             comment.add(item!!)
                         }
                     }
+                    message_txtvName.text = destinationUser.userNickname
+
                     Log.d("aaaa",comment.toString())
                     notifyDataSetChanged()
 
@@ -240,12 +314,16 @@ class MessageActivity : AppCompatActivity() {
                 messageViewholder.messageItem_txtvMessage.setTextSize(25.toFloat())
                 messageViewholder.messageItem_linearlayoutMain.gravity = Gravity.START
             }
+
             messageViewholder.messageItem_txtvTimeStamp.text = dateFormat(comment[position].timeStamp!!).toString()
 
         }
 
     }
+
+
     companion object{
+        var messageActivity:Activity? = null
         fun dateFormat(timeStamp:Long):String{
             var dateString:String = ""
             var simpleHour = SimpleDateFormat("HH")
@@ -275,5 +353,6 @@ class MessageActivity : AppCompatActivity() {
             return dateString
         }
     }
+
 }
 

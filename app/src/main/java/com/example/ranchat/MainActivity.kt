@@ -117,6 +117,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         setContentView(R.layout.activity_main)
         main_bottomnavView.setOnNavigationItemSelectedListener(this)
         main_bottomnavView.selectedItemId = R.id.action_users
+        settingBoolean = true
+
+
         passPushTokenToServer()
 
 
@@ -140,11 +143,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     companion object{
+
         var chatStack = Stack<Fragment>()
         var usersStack = Stack<Fragment>()
         var squareStack = Stack<Fragment>()
         //var settingStack = Stack<Fragment>()
+        var settingBoolean = true
         var lastSelect = ""
+
 
     }
     fun passPushTokenToServer(){
@@ -158,13 +164,43 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     Log.d("aaff", "aaa")
                     return@OnCompleteListener
                 }
-
                 // Get new Instance ID token
                 val token = task.result?.token
                 var map:MutableMap<String,Any> = mutableMapOf("pushToken" to token!!)
                 FirebaseFirestore.getInstance().collection("user").document(uid!!).update(map)
                 Log.d("aaff", "seee")
             })
+
+        var firestore : FirebaseFirestore? = FirebaseFirestore.getInstance()
+
+
+        firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.get()?.
+            addOnCompleteListener{
+                if(it==null){
+                    Log.d("snapshot","null")
+                }else{
+                    var user = it.result?.toObject(User::class.java)
+                    user?.timeStamp = System.currentTimeMillis()
+                    firestore.collection("currentUser").document(FirebaseAuth.getInstance().currentUser?.uid!!).get().
+                        addOnCompleteListener{
+                            var currentUser = it.result?.toObject(User::class.java)
+                            if(it==null){
+                                Log.d("snapshot","null")
+                            }else{
+                                if (currentUser?.uid!=null){
+                                    firestore.collection("currentUser").document(user?.uid!!).delete()
+                                    firestore.collection("currentUser").document(user?.uid!!).set(user)
+
+                                }else{
+                                    firestore.collection("currentUser").document(user?.uid!!).set(user)
+                                }
+
+                            }
+                        }
+                }
+            }
+
+
 
 
     }

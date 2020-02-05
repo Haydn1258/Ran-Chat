@@ -23,6 +23,7 @@ import com.example.ranchat.model.Comment
 import com.example.ranchat.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.card_chat.view.*
 import kotlinx.android.synthetic.main.fragment_chat.*
@@ -60,7 +61,7 @@ class ChatViewFragment : Fragment() {
         var uid:String? = FirebaseAuth.getInstance().currentUser?.uid
         var destinationUsers:ArrayList<String> = arrayListOf()
         init {
-            FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").orderBy("timeStamp")
+            FirebaseFirestore.getInstance().collection("chatRooms").document(uid!!).collection("chatUsers").orderBy("timeStamp",  Query.Direction.DESCENDING)
                 .addSnapshotListener {
                         querySnapshot, firebaseFirestoreException ->
                     chatUsers.clear()
@@ -106,8 +107,8 @@ class ChatViewFragment : Fragment() {
                 }
                 if (chatUser.userUri != null) {
                     Glide.with(holder.itemView.context).load(chatUser.userUri)
-                        .override(1080,1080)
                         .centerCrop()
+                        .circleCrop()
                         .into(chatViewholder.cardChat_imgv)
                 }else {
                     chatViewholder.cardChat_imgv.setColorFilter(

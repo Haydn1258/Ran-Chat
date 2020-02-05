@@ -10,4 +10,5 @@
     <string name="access_user">유저 목록</string>
     <string name="send">전송</string>
     <string name="chatting">채팅</string>
+    <string name="exit">나가기</string>
 </resources>
