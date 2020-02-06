@@ -29,6 +29,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_setting.*
+import kotlinx.android.synthetic.main.fragment_setting.view.*
 import java.security.Key
 
 class SettingViewFragment : Fragment() {
@@ -73,6 +74,7 @@ class SettingViewFragment : Fragment() {
                                 PorterDuff.Mode.SRC_IN
                             )
                         }
+                        view.setting_txtvNickName.setText(user?.userNickname.toString())
                     }
                 }
 
@@ -81,12 +83,19 @@ class SettingViewFragment : Fragment() {
             }
         }
 
-        settingImageView.setOnClickListener {
+        view.setting_btnChange.setOnClickListener {
             val intent = Intent(activity, ProfileActivity::class.java)
+            startActivity(intent)
+        }
+
+        view.setting_btnSetting.setOnClickListener {
+            val intent = Intent(activity, AccountActivity::class.java)
             startActivity(intent)
         }
 
         return view
     }
+
+
 
 }

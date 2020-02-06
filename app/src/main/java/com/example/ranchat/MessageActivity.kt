@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.ranchat.dialogs.ChatDialogFragment
 import com.example.ranchat.model.ChatUser
 import com.example.ranchat.model.Comment
 import com.example.ranchat.model.NotificationModel
@@ -108,6 +109,9 @@ class MessageActivity : AppCompatActivity() {
                         }
                     }
                 }
+                KeyEvent.KEYCODE_BACK ->{
+                    finish()
+                }
             }
             return@setOnKeyListener true
         }
@@ -118,7 +122,7 @@ class MessageActivity : AppCompatActivity() {
 
         drawer_btnExit.setOnClickListener {
             //showDialog(it.context)
-            ChatDialogFagment.newInstance(destinationUid).show(supportFragmentManager, "dialog")
+            ChatDialogFragment.newInstance(destinationUid).show(supportFragmentManager, "dialog")
         }
 
         message_imgButton.setOnClickListener {
@@ -352,6 +356,10 @@ class MessageActivity : AppCompatActivity() {
             }
             return dateString
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
     }
 
 }

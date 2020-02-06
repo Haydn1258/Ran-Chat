@@ -78,7 +78,6 @@
             app:layout_constraintEnd_toStartOf="@+id/message_btn"
             android:hint="메세지를 입력해주세요"
             android:imeOptions="actionSearch"
-
             android:paddingStart="10dp"
             android:textSize="22sp"
             android:background="@android:color/transparent">

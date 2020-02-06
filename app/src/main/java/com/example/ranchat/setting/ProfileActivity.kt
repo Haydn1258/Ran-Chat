@@ -11,12 +11,15 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.example.ranchat.LoginActivity
 import com.example.ranchat.MainActivity
 import com.example.ranchat.R
+import com.example.ranchat.dialogs.ProfileChangeFragment
 import com.example.ranchat.model.User
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
@@ -31,7 +34,9 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.dialog_profile_change.*
 import kotlinx.android.synthetic.main.fragment_setting.*
+import kotlinx.android.synthetic.main.fragment_setting.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
@@ -39,9 +44,10 @@ import kotlin.collections.HashMap
 class ProfileActivity : AppCompatActivity() {
     var PICK_IMAGE_FROM_ALBUM = 0;
     var storage : FirebaseStorage? = null
-    var photoUri : Uri? = null
+
     var auth : FirebaseAuth? = null
     var firestore : FirebaseFirestore? = null
+    var photoUri:Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,7 @@ class ProfileActivity : AppCompatActivity() {
             profile_imgv.background = ShapeDrawable(OvalShape())
             profile_imgv.clipToOutline = true
         }
+
         firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.
             get()?.addOnSuccessListener {
                 if(it == null){
@@ -61,6 +68,8 @@ class ProfileActivity : AppCompatActivity() {
                 }else{
                     var user = it.toObject(User::class.java)
                     Log.d("aaff", user?.userUri.toString())
+
+                    profile_edtNickName.setText(user?.userNickname.toString())
                     if (user?.userUri!=null){
                         Glide.with(this)
                             .load(user.userUri)
@@ -78,19 +87,16 @@ class ProfileActivity : AppCompatActivity() {
                 }
             }
 
-
         profile_imgv.setOnClickListener {
             var photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"
             startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
         }
+
+
         profile_btnChange.setOnClickListener {
             profile_btnChange.isEnabled=false
             update()
-        }
-
-        profile_btn.setOnClickListener {
-            signOut()
         }
     }
 
@@ -107,50 +113,49 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
     }
+
     fun update(){
         var timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         var imageFileName = "IMAGE"+timestamp+"_.png"
         var userNickname :String = ""
+        if (!profile_edtNickName.text.toString().replace(" ", "").equals("")){
+            if(photoUri != null){
+                var storageRef = storage?.reference?.child("image")?.child(imageFileName)
+                storageRef?.putFile(photoUri!!)?.continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
+                    return@continueWithTask storageRef.downloadUrl
+                }?.addOnSuccessListener { uri ->
+                    var userUpdate:MutableMap<String,Any> = mutableMapOf("userUri" to uri.toString(), "userNickname" to profile_edtNickName.text.toString())
+                    firestore?.collection("user")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
+                        firestore?.collection("currentUser")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
+                            finish()
+                            profile_btnChange.isEnabled=true
+                        }
+                    }
+                    setResult(Activity.RESULT_OK)
+                    Toast.makeText(this, "업로드 완료", Toast.LENGTH_LONG).show()
 
-        if(photoUri != null){
-            var storageRef = storage?.reference?.child("image")?.child(imageFileName)
-            storageRef?.putFile(photoUri!!)?.continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
-                return@continueWithTask storageRef.downloadUrl
-            }?.addOnSuccessListener { uri ->
-                var userUpdate:MutableMap<String,Any> = mutableMapOf("userUri" to uri.toString())
+
+                }
+
+            }else{
+                var userUpdate:MutableMap<String,Any?> = mutableMapOf("userNickname" to profile_edtNickName.text.toString())
                 firestore?.collection("user")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
                     firestore?.collection("currentUser")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
                         finish()
                         profile_btnChange.isEnabled=true
                     }
                 }
-                setResult(Activity.RESULT_OK)
-                Toast.makeText(this, "업로드 완료", Toast.LENGTH_LONG).show()
-
-
             }
-
+        }else{
+            profile_edtNickName.setText("")
+            Toast.makeText(applicationContext, "닉네임을 다시 입력해주세요", Toast.LENGTH_SHORT).show()
+            profile_btnChange.isEnabled=true
         }
+
+    }
+    companion object{
+
+
     }
 
-    fun signOut(){
-        FirebaseFirestore.getInstance().collection("currentUser").document(FirebaseAuth.getInstance().currentUser?.uid!!).get().
-            addOnCompleteListener{
-                var currentUser = it.result?.toObject(User::class.java)
-                if(it==null){
-                    Log.d("snapshot","null")
-                }else{
-                    FirebaseFirestore.getInstance().collection("currentUser").document(FirebaseAuth.getInstance()?.uid!!).delete().addOnSuccessListener {
-                        MainActivity.settingBoolean = false
-                        var userToken:MutableMap<String,Any> = mutableMapOf("pushToken" to "")
-                        FirebaseFirestore.getInstance().collection("user").document(FirebaseAuth.getInstance()?.uid!!).update(userToken)
-                        val intent = Intent(this, LoginActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        FirebaseAuth.getInstance().signOut()
-                    }
-                }
-            }
-    }
 }
