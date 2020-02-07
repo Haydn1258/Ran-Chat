@@ -36,6 +36,10 @@ class SquareViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = LayoutInflater.from(activity).inflate(R.layout.fragment_square, container, false)
+        view.square_imgButton.setOnClickListener {
+            val intent = Intent(activity, WritingActivity::class.java)
+            startActivity(intent)
+        }
 
         return view
     }

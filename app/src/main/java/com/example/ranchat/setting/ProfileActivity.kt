@@ -60,6 +60,9 @@ class ProfileActivity : AppCompatActivity() {
             profile_imgv.background = ShapeDrawable(OvalShape())
             profile_imgv.clipToOutline = true
         }
+        profile_imgButton.setOnClickListener {
+            finish()
+        }
 
         firestore?.collection("user")?.document(FirebaseAuth.getInstance().currentUser?.uid!!)?.
             get()?.addOnSuccessListener {

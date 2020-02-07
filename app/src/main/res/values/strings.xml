@@ -15,4 +15,5 @@
     <string name="accout_setting">계정 설정</string>
     <string name="profile_chagne">프로필 수정</string>
     <string name="signout">로그아웃</string>
+    <string name="bulletin_board">게시판</string>
 </resources>
