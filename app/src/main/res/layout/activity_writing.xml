@@ -5,5 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".square.WritingActivity">
+    <View
+        android:id="@+id/writingView"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorGray"
+        app:layout_constraintTop_toBottomOf="@+id/writing_imgButton"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/writing_txtvWriting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/writing"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/writing_imgButton"
+        app:layout_constraintBottom_toBottomOf="@+id/writing_imgButton"/>
+
+    <Button
+        android:id="@+id/writing_btnComplete"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        android:text="@string/complete"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/writing_imgButton"
+        app:layout_constraintBottom_toBottomOf="@+id/writing_imgButton"/>
+
+
+    <ImageButton
+        android:id="@+id/writing_imgButton"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        app:srcCompat="@drawable/baseline_clear_black_36" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -124,7 +124,6 @@ class MessageActivity : AppCompatActivity() {
             //showDialog(it.context)
             ChatDialogFragment.newInstance(destinationUid).show(supportFragmentManager, "dialog")
         }
-
         message_imgButton.setOnClickListener {
             finish()
         }
@@ -300,6 +299,10 @@ class MessageActivity : AppCompatActivity() {
             //상대방이 보낸 메세지
             }else{
                 if (destinationUser.userUri != null) {
+                    messageViewholder.messageItem_imgvProfile.setColorFilter(
+                        Color.parseColor("#A4FBB5"),
+                        PorterDuff.Mode.DST
+                    )
                     Glide.with(holder.itemView.context).load(destinationUser.userUri)
                         .override(50,50)
                         .centerCrop()

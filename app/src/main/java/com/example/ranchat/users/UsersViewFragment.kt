@@ -95,6 +95,10 @@ class UsersViewFragment : Fragment() {
             viewholder.cardUser_txtvName.text = user!![position].userNickname
 
             if (user[position].userUri != null) {
+                viewholder.cardUser_imgv.setColorFilter(
+                    Color.parseColor("#A4FBB5"),
+                    PorterDuff.Mode.DST
+                )
                 Glide.with(holder.itemView.context).load(user!![position].userUri)
                     .override(50,50)
                     .centerCrop()

@@ -106,6 +106,10 @@ class ChatViewFragment : Fragment() {
                     chatUser = snapshot.toObject(User::class.java)!!
                 }
                 if (chatUser.userUri != null) {
+                    chatViewholder.cardChat_imgv.setColorFilter(
+                        Color.parseColor("#A4FBB5"),
+                        PorterDuff.Mode.DST
+                    )
                     Glide.with(holder.itemView.context).load(chatUser.userUri)
                         .centerCrop()
                         .circleCrop()

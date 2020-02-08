@@ -1,6 +1,8 @@
 package com.example.ranchat.setting
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -35,6 +37,7 @@ import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.android.synthetic.main.dialog_profile_change.*
+import kotlinx.android.synthetic.main.dialog_profile_change.view.*
 import kotlinx.android.synthetic.main.fragment_setting.*
 import kotlinx.android.synthetic.main.fragment_setting.view.*
 import java.text.SimpleDateFormat
@@ -48,6 +51,7 @@ class ProfileActivity : AppCompatActivity() {
     var auth : FirebaseAuth? = null
     var firestore : FirebaseFirestore? = null
     var photoUri:Uri? = null
+    var userUri:String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,12 +74,17 @@ class ProfileActivity : AppCompatActivity() {
                     Log.d("snapshot","null")
                 }else{
                     var user = it.toObject(User::class.java)
+                    userUri = user?.userUri
                     Log.d("aaff", user?.userUri.toString())
 
                     profile_edtNickName.setText(user?.userNickname.toString())
-                    if (user?.userUri!=null){
+                    if (userUri!=null){
+                        profile_imgv.setColorFilter(
+                            Color.parseColor("#A4FBB5"),
+                            PorterDuff.Mode.DST
+                        )
                         Glide.with(this)
-                            .load(user.userUri)
+                            .load(userUri)
                             .override(100,100)
                             .centerCrop()
                             .into(profile_imgv)
@@ -91,9 +100,7 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         profile_imgv.setOnClickListener {
-            var photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
-            startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
+            showDialog(it.context)
         }
 
 
@@ -115,6 +122,36 @@ class ProfileActivity : AppCompatActivity() {
                     .into(profile_imgv)
             }
         }
+    }
+
+    fun showDialog(context: Context){
+        val builder = AlertDialog.Builder(context)
+        val dialog = builder.create()
+
+        val layoutInterface = layoutInflater
+        val view = layoutInterface.inflate(R.layout.dialog_profile_change, null)
+        view.dialogProfielChange_Album.setOnClickListener {
+            var photoPickerIntent = Intent(Intent.ACTION_PICK)
+            photoPickerIntent.type = "image/*"
+            startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
+            profile_imgv.setColorFilter(
+                Color.parseColor("#A4FBB5"),
+                PorterDuff.Mode.DST
+            )
+            dialog.dismiss()
+        }
+        view.dialogProfielChange_basic.setOnClickListener {
+            userUri = null
+            photoUri = null
+            profile_imgv.setImageResource(R.drawable.baseline_supervised_user_circle_black_48dp2)
+            profile_imgv.setColorFilter(
+                Color.parseColor("#A4FBB5"),
+                PorterDuff.Mode.SRC_IN
+            )
+            dialog.dismiss()
+        }
+        dialog.setView(view)
+        dialog.show()
     }
 
     fun update(){
@@ -141,7 +178,7 @@ class ProfileActivity : AppCompatActivity() {
                 }
 
             }else{
-                var userUpdate:MutableMap<String,Any?> = mutableMapOf("userNickname" to profile_edtNickName.text.toString())
+                var userUpdate:MutableMap<String,Any?> = mutableMapOf("userNickname" to profile_edtNickName.text.toString(), "userUri" to userUri)
                 firestore?.collection("user")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
                     firestore?.collection("currentUser")?.document(auth?.currentUser?.uid!!)?.update(userUpdate)?.addOnSuccessListener {
                         finish()
@@ -154,10 +191,6 @@ class ProfileActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "닉네임을 다시 입력해주세요", Toast.LENGTH_SHORT).show()
             profile_btnChange.isEnabled=true
         }
-
-    }
-    companion object{
-
 
     }
 

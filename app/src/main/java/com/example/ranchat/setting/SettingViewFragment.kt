@@ -62,6 +62,10 @@ class SettingViewFragment : Fragment() {
                                            .into(settingImageView);
                                    }
                                })*/
+                            settingImageView.setColorFilter(
+                                Color.parseColor("#A4FBB5"),
+                                PorterDuff.Mode.DST
+                            )
                             Glide.with(this)
                                 .load(user.userUri)
                                 .override(100,100)

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:padding="20dp"
         android:layout_height="wrap_content"
-        android:textSize="26sp"
+        android:textSize="22sp"
         android:textColor="@android:color/black"
         android:text="대화 종료"
         android:textStyle="bold"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:text="채팅방에서 나가시겠습니까? 나가기를 하면 대화내용 및 채팅방 정보가 모두 삭제됩니다."
         android:gravity="center"
         android:textColor="@android:color/black"/>
