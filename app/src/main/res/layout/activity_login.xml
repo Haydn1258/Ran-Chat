@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/login_txtvLogin"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="40dp"
-        android:layout_marginStart="50dp"/>
+        android:layout_marginStart="30dp"/>
 
     <EditText
         android:id="@+id/login_edtEmail"
@@ -41,8 +41,8 @@
         android:ems="10"
         android:textSize="22sp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="@string/email"
         app:layout_constraintTop_toBottomOf="@id/login_txtvEmail"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +58,7 @@
         app:layout_constraintEnd_toEndOf="@+id/login_edtEmail"
         app:layout_constraintStart_toStartOf="@+id/login_edtEmail"
         app:layout_constraintTop_toBottomOf="@+id/login_edtEmail" />
+
     <TextView
         android:id="@+id/login_txtvPassword"
         android:layout_width="wrap_content"
@@ -68,7 +69,7 @@
         app:layout_constraintTop_toBottomOf="@+id/login_viewEmailLine"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
-        android:layout_marginStart="50dp"/>
+        android:layout_marginStart="30dp"/>
 
     <EditText
         android:id="@+id/login_edtPassword"
@@ -79,8 +80,8 @@
         android:textSize="22sp"
         android:maxLength="25"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="@string/password"
         app:layout_constraintTop_toBottomOf="@id/login_txtvPassword"
         app:layout_constraintStart_toStartOf="parent"

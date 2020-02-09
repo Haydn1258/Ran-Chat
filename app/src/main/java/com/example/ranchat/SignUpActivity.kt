@@ -48,7 +48,6 @@ class SignUpActivity : AppCompatActivity() {
                     user.uid = auth?.uid
 
                     val userProfileChangeRequest = UserProfileChangeRequest.Builder().setDisplayName(user.userNickname).build()
-
                     task.getResult()!!.user!!.updateProfile(userProfileChangeRequest)
 
                     firestore?.collection("user")?.document(user.uid!!)?.set(user)

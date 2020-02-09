@@ -41,7 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_txtvLogin"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="40dp"
-        android:layout_marginStart="40dp"/>
+        android:layout_marginStart="30dp"/>
 
     <EditText
         android:id="@+id/signup_edtEmail"
@@ -51,8 +51,8 @@
         android:ems="10"
         android:textSize="22sp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="@string/email"
         app:layout_constraintTop_toBottomOf="@id/signup_txtvEmail"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +78,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_viewEmailLine"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
-        android:layout_marginStart="40dp"/>
+        android:layout_marginStart="30dp"/>
 
     <EditText
         android:id="@+id/signup_edtPassword"
@@ -89,8 +89,8 @@
         android:textSize="22sp"
         android:maxLength="25"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="비밀번호(6~12자)"
         app:layout_constraintTop_toBottomOf="@id/signup_txtvPassword"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,7 +117,7 @@
         app:layout_constraintTop_toBottomOf="@+id/signup_viewPasswordLine"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="30dp"
-        android:layout_marginStart="40dp"/>
+        android:layout_marginStart="30dp"/>
 
     <EditText
         android:id="@+id/signup_edtNickname"
@@ -127,8 +127,8 @@
         android:ems="10"
         android:textSize="22sp"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:hint="@string/nickname"
         app:layout_constraintTop_toBottomOf="@id/signup_txtvNickname"
         app:layout_constraintStart_toStartOf="parent"

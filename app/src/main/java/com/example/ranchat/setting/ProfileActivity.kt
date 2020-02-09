@@ -1,9 +1,11 @@
 package com.example.ranchat.setting
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.ShapeDrawable
@@ -23,6 +25,7 @@ import com.example.ranchat.MainActivity
 import com.example.ranchat.R
 import com.example.ranchat.dialogs.ProfileChangeFragment
 import com.example.ranchat.model.User
+import com.example.ranchat.square.WritingActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -47,6 +50,7 @@ import kotlin.collections.HashMap
 class ProfileActivity : AppCompatActivity() {
     var PICK_IMAGE_FROM_ALBUM = 0;
     var storage : FirebaseStorage? = null
+    val READ_EXTERNAL_STORAGE_PERMISSION = 100
 
     var auth : FirebaseAuth? = null
     var firestore : FirebaseFirestore? = null
@@ -124,6 +128,39 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            READ_EXTERNAL_STORAGE_PERMISSION -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    var photoPickerIntent = Intent(Intent.ACTION_PICK)
+                    photoPickerIntent.type = "image/*"
+                    startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
+                    profile_imgv.setColorFilter(
+                        Color.parseColor("#A4FBB5"),
+                        PorterDuff.Mode.DST
+                    )
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return
+            }
+
+            // Add other 'when' lines to check for other
+            // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
+
     fun showDialog(context: Context){
         val builder = AlertDialog.Builder(context)
         val dialog = builder.create()
@@ -131,13 +168,7 @@ class ProfileActivity : AppCompatActivity() {
         val layoutInterface = layoutInflater
         val view = layoutInterface.inflate(R.layout.dialog_profile_change, null)
         view.dialogProfielChange_Album.setOnClickListener {
-            var photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
-            startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
-            profile_imgv.setColorFilter(
-                Color.parseColor("#A4FBB5"),
-                PorterDuff.Mode.DST
-            )
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_PERMISSION)
             dialog.dismiss()
         }
         view.dialogProfielChange_basic.setOnClickListener {
@@ -172,7 +203,7 @@ class ProfileActivity : AppCompatActivity() {
                         }
                     }
                     setResult(Activity.RESULT_OK)
-                    Toast.makeText(this, "업로드 완료", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "프로필 수정 완료", Toast.LENGTH_LONG).show()
 
 
                 }
